@@ -1,0 +1,27 @@
+extends layout
+
+block content
+  div.container
+    h1(class="title is-1") Contact
+
+    form(name="my-form" action="/confirm" method="POST" enctype="multipart/form-data")
+      div.field
+        label.label Name
+        div.control.has-icons-left.has-icons-right
+          input.input(type="text" name="username" placeholder="Username")
+          span.icon.is-small.is-left
+            i.fas.fa-user
+      
+      div.field
+        label.label Email
+        div.control.has-icons-left.has-icons-right
+          input.input(type="text" name="email" placeholder="Email")
+          span.icon.is-small.is-left
+            i.fas.fa-envelope
+
+      div.field
+        label.label Subject
+        div.control
+          input(name="photo", type="file")
+
+      button(type="submit" class="button is-info") Submit
