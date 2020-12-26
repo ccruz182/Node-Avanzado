@@ -4,12 +4,19 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
+const helmet = require("helmet");
+const moment = require("moment");
+
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 
 const upload = require("./middleware/uploadMiddleware");
+const ImageProcessor = require("./imgProcess/ImageProcessor");
 
 var app = express();
+
+// Helmet configuration.
+app.use(helmet());
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -24,11 +31,23 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 
+app.get("/dates", (req, res) => {
+  const date = moment();
+  const formattedDate = date.format("DD ** MM ** YYYY");
+
+  const date2 = moment("1997-04-10");
+
+  res.send(`Fecha ${formattedDate} vs ${date2} = ${date.diff(date2, 'days')}`);
+});
 app.post("/confirm", upload.single("photo"), (req, res, next) => {
   const datos = req.body;
   const files = req.file;
 
-  res.render("confirm", { datos, files });
+  const imgProcessor = new ImageProcessor();
+
+  imgProcessor
+    .resize(files, 128, 128)
+    .then(() => res.render("confirm", { datos, files }));
 });
 
 // catch 404 and forward to error handler
